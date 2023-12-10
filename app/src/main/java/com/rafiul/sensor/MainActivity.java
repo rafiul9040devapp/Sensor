@@ -11,6 +11,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 
 import com.rafiul.sensor.databinding.ActivityMainBinding;
+import com.rafiul.sensor.service.SensorRecordService;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Sensor accelerometer;
     private Sensor lightSensor;
     private Sensor gyroscope;
+
+    private SensorRecordService sensorRecordService;
 
 
     @Override
@@ -59,23 +62,29 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
 
+        float proximityValue=0;
+        float lightSensorValue=0;
+        float[] accelerometerValue={};
+        float[] gyroscopeValue={};
         if (sensorEvent.sensor.getType() == Sensor.TYPE_PROXIMITY) {
-            float proximityValue = sensorEvent.values[0];
+            proximityValue = sensorEvent.values[0];
             activityMainBinding.tvProximitySensor.setText("PROXIMITY SENSOR: " + proximityValue);
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
-            float lightSensorValue = sensorEvent.values[0];
+            lightSensorValue = sensorEvent.values[0];
             activityMainBinding.tvLightSensor.setText("LIGHT SENSOR: " + lightSensorValue);
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            float[] accelerometerValue = sensorEvent.values;
+             accelerometerValue = sensorEvent.values;
             activityMainBinding.tvAccelerometer.setText("ACCELEROMETER: X=" + accelerometerValue[0] +
                     "\nY=" + accelerometerValue[1] +
                     "\nZ=" + accelerometerValue[2]);
         } else if (sensorEvent.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            float[] gyroscopeValue = sensorEvent.values;
+            gyroscopeValue = sensorEvent.values;
             activityMainBinding.tvGyroscope.setText("GYROSCOPE: X=" + gyroscopeValue[0] +
                     "\nY=" + gyroscopeValue[1] +
                     "\nZ=" + gyroscopeValue[2]);
         }
+
+        sensorRecordService.recordSensorData(proximityValue,lightSensorValue,accelerometerValue,gyroscopeValue);
     }
 
     @Override
